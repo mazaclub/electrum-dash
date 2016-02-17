@@ -18,8 +18,7 @@ from collections import deque
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-    'electrum.darkcointalk.org':DEFAULT_PORTS, # propulsion
-    'drk1.electrum-servers.us':DEFAULT_PORTS,  # elm4ever
+    '109.120.190.22':DEFAULT_PORTS,            # Reedych
     'electrum.drk.siampm.com':DEFAULT_PORTS,   # thelazier
     'electrum-drk.club':DEFAULT_PORTS,         # duffman
 }
