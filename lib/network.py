@@ -22,6 +22,8 @@ DEFAULT_SERVERS = {
     'drk1.electrum-servers.us':DEFAULT_PORTS,  # elm4ever
     'electrum.drk.siampm.com':DEFAULT_PORTS,   # thelazier
     'electrum-drk.club':DEFAULT_PORTS,         # duffman
+    'electrum.dash.org.ru':DEFAULT_PORTS,      # poiuty
+    'wrwx2dy7jyh32o53.onion':DEFAULT_PORTS,      # poiuty
 }
 
 NODES_RETRY_INTERVAL = 60
