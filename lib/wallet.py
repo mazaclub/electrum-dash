@@ -1950,7 +1950,7 @@ class Wallet(object):
     @classmethod
     def is_xpub(self, text):
         try:
-            assert text[0:4] == 'xpub'
+            assert text[0:4] in ('xpub', 'drkp')
             deserialize_xkey(text)
             return True
         except:
@@ -1959,7 +1959,7 @@ class Wallet(object):
     @classmethod
     def is_xprv(self, text):
         try:
-            assert text[0:4] == 'xprv'
+            assert text[0:4] in ('xprv', 'drkv')
             deserialize_xkey(text)
             return True
         except:

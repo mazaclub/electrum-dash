@@ -6,7 +6,7 @@ from lib.bitcoin import (
     generator_secp256k1, point_to_ser, public_key_to_bc_address, EC_KEY,
     bip32_root, bip32_public_derivation, bip32_private_derivation, pw_encode,
     pw_decode, Hash, PoWHash, public_key_from_private_key, address_from_private_key,
-    is_valid, is_private_key, xpub_from_xprv, rev_hex)
+    is_valid, is_private_key, xpub_from_xprv, rev_hex, deserialize_xkey)
 
 try:
     import ecdsa
@@ -135,6 +135,33 @@ class Test_bitcoin(unittest.TestCase):
         result = xpub_from_xprv(xprv, testnet=True)
         self.assertEqual(result, xpub)
 
+    def test_deserialize_xkey(self):
+        xpub = "xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy"
+        dash_xpub = "drkpS4muscpqe83Yft6RsgPzygCJngq3D8yfuQ8YhyCuisZXor5WxnnyP7s6DqpbuGwZA4fo3s72HBvV5dPYVABrCYWzwQETbpTMg4pfwVX9fTA"
+        for key in [xpub, dash_xpub]:
+            # depth = 5
+            # parent fingerprint = 0xd880d7d8
+            # child index = 1000000000
+            # chaincode = 0xc783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e
+            # pubkey = 0x022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011
+            expected = (5, 'd880d7d8'.decode('hex'), '3b9aca00'.decode('hex'),
+                        'c783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e'.decode('hex'),
+                        '022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011'.decode('hex'))
+            self.assertEqual(expected, deserialize_xkey(key))
+
+        xprv = "xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76"
+        dash_xprv = "drkvjVe4RT6FJDdzF64gV69phbb1YSkaVRW74wrW3m39c3Fi48kteM3sDh42XeTWpaYyH67He1SUdg1fPJyaisEHJ2Q9xmorCEiP41tNKyfe2Uv"
+
+        for key in [xprv, dash_xprv]:
+            # depth = 5
+            # parent fingerprint = 0xd880d7d8
+            # child index = 1000000000
+            # chaincode = 0xc783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e
+            # privkey = 0x471b76e389e528d6de6d816857e012c5455051cad6660850e58372a6c3e6e7c8
+            expected = (5, 'd880d7d8'.decode('hex'), '3b9aca00'.decode('hex'),
+                        'c783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e'.decode('hex'),
+                        '471b76e389e528d6de6d816857e012c5455051cad6660850e58372a6c3e6e7c8'.decode('hex'))
+            self.assertEqual(expected, deserialize_xkey(key))
 
 class Test_keyImport(unittest.TestCase):
     """ The keys used in this class are TEST keys from

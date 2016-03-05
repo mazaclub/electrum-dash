@@ -647,11 +647,14 @@ def _CKD_pub(cK, c, s):
 
 BITCOIN_HEADER_PRIV = "0488ade4"
 BITCOIN_HEADER_PUB = "0488b21e"
+DASH_HEADER_PRIV = "02fe52f8"
+DASH_HEADER_PUB = "02fe52cc"
 
 TESTNET_HEADER_PRIV = "04358394"
 TESTNET_HEADER_PUB = "043587cf"
 
 BITCOIN_HEADERS = (BITCOIN_HEADER_PUB, BITCOIN_HEADER_PRIV)
+DASH_HEADERS = (DASH_HEADER_PUB, DASH_HEADER_PRIV)
 TESTNET_HEADERS = (TESTNET_HEADER_PUB, TESTNET_HEADER_PRIV)
 
 def _get_headers(testnet):
@@ -671,9 +674,9 @@ def deserialize_xkey(xkey):
     xkey_header = xkey[0:4].encode('hex')
     # Determine if the key is a bitcoin key or a testnet key.
     if xkey_header in TESTNET_HEADERS:
-        head = TESTNET_HEADER_PRIV
-    elif xkey_header in BITCOIN_HEADERS:
-        head = BITCOIN_HEADER_PRIV
+        head = [TESTNET_HEADER_PRIV]
+    elif xkey_header in BITCOIN_HEADERS or xkey_header in DASH_HEADERS:
+        head = [BITCOIN_HEADER_PRIV, DASH_HEADER_PRIV]
     else:
         raise Exception("Unknown xkey header: '%s'" % xkey_header)
 
@@ -681,7 +684,7 @@ def deserialize_xkey(xkey):
     fingerprint = xkey[5:9]
     child_number = xkey[9:13]
     c = xkey[13:13+32]
-    if xkey[0:4].encode('hex') == head:
+    if xkey[0:4].encode('hex') in head:
         K_or_k = xkey[13+33:]
     else:
         K_or_k = xkey[13+32:]
