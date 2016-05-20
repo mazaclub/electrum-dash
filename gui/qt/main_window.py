@@ -45,12 +45,14 @@ from electrum_dash import SimpleConfig, Wallet, WalletStorage
 from electrum_dash import Imported_Wallet
 from electrum_dash import paymentrequest
 from electrum_dash.contacts import Contacts
+from electrum_dash.masternode_manager import MasternodeManager
 
 from amountedit import AmountEdit, BTCAmountEdit, MyLineEdit, BTCkBEdit
 from network_dialog import NetworkDialog
 from qrcodewidget import QRCodeWidget, QRDialog
 from qrtextedit import ScanQRTextEdit, ShowQRTextEdit
 from transaction_dialog import show_transaction
+from masternode_dialog import MasternodeDialog
 
 
 
@@ -114,6 +116,7 @@ class ElectrumWindow(QMainWindow):
         self.config = config
         self.network = network
         self.wallet = None
+        self.masternode_manager = None
 
         self.gui_object = gui_object
         self.tray = gui_object.tray
@@ -138,6 +141,7 @@ class ElectrumWindow(QMainWindow):
         tabs.addTab(self.create_receive_tab(), _('Receive') )
         tabs.addTab(self.create_addresses_tab(), _('Addresses') )
         tabs.addTab(self.create_contacts_tab(), _('Contacts') )
+        tabs.addTab(self.create_proposals_tab(), _('Budget Proposals'))
         tabs.addTab(self.create_console_tab(), _('Console') )
         tabs.setMinimumSize(600, 400)
         tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -159,6 +163,7 @@ class ElectrumWindow(QMainWindow):
         QShortcut(QKeySequence("Ctrl+R"), self, self.update_wallet)
         QShortcut(QKeySequence("Ctrl+PgUp"), self, lambda: tabs.setCurrentIndex( (tabs.currentIndex() - 1 )%tabs.count() ))
         QShortcut(QKeySequence("Ctrl+PgDown"), self, lambda: tabs.setCurrentIndex( (tabs.currentIndex() + 1 )%tabs.count() ))
+        QShortcut(QKeySequence("Ctrl+M"), self, self.show_masternode_dialog)
 
         for i in range(tabs.count()):
             QShortcut(QKeySequence("Alt+" + str(i + 1)), self, lambda i=i: tabs.setCurrentIndex(i))
@@ -169,6 +174,7 @@ class ElectrumWindow(QMainWindow):
         self.connect(self, QtCore.SIGNAL('transaction_signal'), lambda: self.notify_transactions() )
         self.connect(self, QtCore.SIGNAL('payment_request_ok'), self.payment_request_ok)
         self.connect(self, QtCore.SIGNAL('payment_request_error'), self.payment_request_error)
+        self.connect(self, QtCore.SIGNAL('proposals_changed'), self.proposals_changed)
         self.labelsChanged.connect(self.update_tabs)
 
         self.history_list.setFocus(True)
@@ -179,6 +185,7 @@ class ElectrumWindow(QMainWindow):
             self.network.register_callback('banner', lambda: self.emit(QtCore.SIGNAL('banner_signal')))
             self.network.register_callback('status', lambda: self.emit(QtCore.SIGNAL('update_status')))
             self.network.register_callback('new_transaction', lambda: self.emit(QtCore.SIGNAL('transaction_signal')))
+            self.network.register_callback('proposals', lambda: self.emit(QtCore.SIGNAL('proposals_changed')))
             self.network.register_callback('stop', lambda: self.emit(QtCore.SIGNAL('stop')))
 
             # set initial message
@@ -220,6 +227,7 @@ class ElectrumWindow(QMainWindow):
     def load_wallet(self, wallet):
         import electrum_dash
         self.wallet = wallet
+        self.masternode_manager = MasternodeManager(self.wallet, self.config)
         # backward compatibility
         self.update_wallet_format()
         self.import_old_contacts()
@@ -228,6 +236,7 @@ class ElectrumWindow(QMainWindow):
         self.dummy_address = a[0] if a else None
         self.accounts_expanded = self.wallet.storage.get('accounts_expanded',{})
         self.current_account = self.wallet.storage.get("current_account", None)
+        self.masternode_manager.send_subscriptions()
         title = 'Electrum-DASH %s  -  %s' % (self.wallet.electrum_version, self.wallet.basename())
         if self.wallet.is_watching_only():
             title += ' [%s]' % (_('watching only'))
@@ -422,6 +431,9 @@ class ElectrumWindow(QMainWindow):
         wallet_menu.addAction(_("&Export History"), self.export_history_dialog)
         wallet_menu.addAction(_("Search"), self.toggle_search).setShortcut(QKeySequence("Ctrl+S"))
 
+        wallet_menu.addSeparator()
+        wallet_menu.addAction(_("Masternodes"), self.show_masternode_dialog)
+
         tools_menu = menubar.addMenu(_("&Tools"))
 
         # Settings / Preferences are all reserved keywords in OSX using this as work around
@@ -597,6 +609,7 @@ class ElectrumWindow(QMainWindow):
         self.update_receive_tab()
         self.update_address_tab()
         self.update_contacts_tab()
+        self.update_proposals_tab()
         self.update_completions()
         self.update_invoices_list()
 
@@ -1747,6 +1760,15 @@ class ElectrumWindow(QMainWindow):
                 l.setCurrentItem(item)
         run_hook('update_contacts_tab', l)
 
+    def create_proposals_tab(self):
+        from masternode_budget_widgets import ProposalsTab
+        self.proposals_list = ProposalsTab(self)
+        return self.proposals_list
+
+    def update_proposals_tab(self):
+        if not self.masternode_manager:
+            return
+        self.proposals_list.update(list(self.masternode_manager.all_proposals))
 
     def create_console_tab(self):
         from console import Console
@@ -2928,3 +2950,13 @@ class ElectrumWindow(QMainWindow):
             f.write(csr)
         #os.system('openssl asn1parse -i -in test.csr')
         return 'test.csr'
+
+    def show_masternode_dialog(self):
+        d = MasternodeDialog(self.masternode_manager, self)
+        d.exec_()
+
+    def proposals_changed(self):
+        """Callback for when proposals change."""
+        if not self.masternode_manager:
+            return
+        self.update_proposals_tab()
