@@ -14,6 +14,10 @@ version = imp.load_source('version', 'lib/version.py')
 if sys.version_info[:3] < (2, 7, 0):
     sys.exit("Error: Electrum-DASH requires Python version >= 2.7.0...")
 
+requirements = []
+# Read requirements.txt and strip newlines from it.
+with open('requirements.txt') as f:
+    requirements = [i.replace('\n', '') for i in f.readlines()]
 
 
 data_files = []
@@ -27,20 +31,11 @@ if platform.system() in [ 'Linux', 'FreeBSD', 'DragonFly']:
 setup(
     name="Electrum-DASH",
     version=version.ELECTRUM_VERSION,
-    install_requires=[
-        'slowaes>=0.1a1',
-        'ecdsa>=0.9',
-        'pbkdf2',
-        'requests',
-        'qrcode',
-        'protobuf',
-        'dnspython',
-        'trezor>=0.6.3',
-        'x11_hash>=1.4',
-    ],
+    install_requires=requirements,
     dependency_links=[
         'git+https://github.com/mazaclub/x11_hash@1.4#egg=x11_hash-1.4',
-        'git+https://github.com/electrum-dash/python-trezor@v0.6.13#egg=trezor',
+        'git+https://github.com/keepkey/python-keepkey@v0.7.2#egg=keepkey',
+        'git+https://github.com/LedgerHQ/btchip-python.git@v0.1.17#egg=btchip',
     ],
     package_dir={
         'electrum_dash': 'lib',
