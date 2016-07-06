@@ -26,16 +26,16 @@ from electrum_gui.qt.main_window import StatusBarButton, ElectrumWindow
 from electrum_gui.qt.installwizard import InstallWizard
 
 try:
-    from trezorlib.client import types
-    from trezorlib.client import proto, BaseClient, ProtocolMixin
-    from trezorlib.qt.pinmatrix import PinMatrixWidget
-    from trezorlib.transport import ConnectionError
-    from trezorlib.transport_hid import HidTransport
-    TREZOR = True
+    from keepkeylib.client import types
+    from keepkeylib.client import proto, BaseClient, ProtocolMixin
+    from keepkeylib.qt.pinmatrix import PinMatrixWidget
+    from keepkeylib.transport import ConnectionError
+    from keepkeylib.transport_hid import HidTransport
+    KEEPKEY = True
 except ImportError:
-    TREZOR = False
+    KEEPKEY = False
 
-import trezorlib.ckd_public as ckd_public
+import keepkeylib.ckd_public as ckd_public
 
 def log(msg):
     stderr.write("%s\n" % msg)
@@ -57,17 +57,17 @@ class Plugin(BasePlugin):
         self.transport = None
 
     def constructor(self, s):
-        return TrezorWallet(s)
+        return KeepKeyWallet(s)
 
     def _init(self):
-        return TREZOR
+        return KEEPKEY
 
     def is_available(self):
         if not self._is_available:
             return False
         if not self.wallet:
             return False
-        if self.wallet.storage.get('wallet_type') != 'trezor':
+        if self.wallet.storage.get('wallet_type') != 'keepkey':
             return False
         return True
 
@@ -91,26 +91,26 @@ class Plugin(BasePlugin):
         return self.compare_version(major, minor, patch) >= 0
 
     def get_client(self):
-        if not TREZOR:
-            give_error('please install github.com/trezor/python-trezor')
+        if not KEEPKEY:
+            give_error('please install github.com/keepkey/python-keepkey')
 
         if not self.client or self.client.bad:
             d = HidTransport.enumerate()
             if not d:
-                give_error('Could not connect to your Trezor. Please verify the cable is connected and that no other app is using it.')
+                give_error('Could not connect to your KeepKey. Please verify the cable is connected and that no other app is using it.')
             self.transport = HidTransport(d[0])
-            self.client = QtGuiTrezorClient(self.transport)
+            self.client = QtGuiKeepKeyClient(self.transport)
             self.client.handler = self.handler
             self.client.set_tx_api(self)
             self.client.bad = False
-            if not self.atleast_version(1, 2, 1):
+            if not self.atleast_version(1, 0, 0):
                 self.client = None
-                give_error('Outdated Trezor firmware. Please update the firmware from https://www.mytrezor.com')
+                give_error('Outdated KeepKey firmware. Please update the firmware from https://www.keepkey.com')
         return self.client
 
     @hook
     def close_wallet(self):
-        print_error("trezor: clear session")
+        print_error("keepkey: clear session")
         if self.client:
             self.client.clear_session()
             self.client.transport.close()
@@ -122,7 +122,7 @@ class Plugin(BasePlugin):
         self.wallet = wallet
         self.wallet.plugin = self
         if self.handler is None:
-            self.handler = TrezorCmdLineHandler()
+            self.handler = KeepKeyCmdLineHandler()
 
     @hook
     def load_wallet(self, wallet, window):
@@ -130,25 +130,25 @@ class Plugin(BasePlugin):
         self.wallet = wallet
         self.window = window
         self.wallet.plugin = self
-        self.trezor_button = StatusBarButton(QIcon(":icons/trezor.png"), _("Trezor"), self.settings_dialog)
+        self.keepkey_button = StatusBarButton(QIcon(":icons/keepkey.png"), _("KeepKey"), self.settings_dialog)
         if type(window) is ElectrumWindow:
-            self.window.statusBar().addPermanentWidget(self.trezor_button)
+            self.window.statusBar().addPermanentWidget(self.keepkey_button)
         if self.handler is None:
-            self.handler = TrezorQtHandler(self.window)
+            self.handler = KeepKeyQtHandler(self.window)
         try:
             self.get_client().ping('t')
         except BaseException as e:
-            QMessageBox.information(self.window, _('Error'), _("Trezor device not detected.\nContinuing in watching-only mode." + '\n\nReason:\n' + str(e)), _('OK'))
+            QMessageBox.information(self.window, _('Error'), _("KeepKey device not detected.\nContinuing in watching-only mode." + '\n\nReason:\n' + str(e)), _('OK'))
             self.wallet.force_watching_only = True
             return
         if self.wallet.addresses() and not self.wallet.check_proper_device():
-            QMessageBox.information(self.window, _('Error'), _("This wallet does not match your Trezor device"), _('OK'))
+            QMessageBox.information(self.window, _('Error'), _("This wallet does not match your KeepKey device"), _('OK'))
             self.wallet.force_watching_only = True
 
     @hook
     def close_wallet(self):
         if type(self.window) is ElectrumWindow:
-            self.window.statusBar().removeWidget(self.trezor_button)
+            self.window.statusBar().removeWidget(self.keepkey_button)
 
     @hook
     def installwizard_load_wallet(self, wallet, window):
@@ -156,22 +156,22 @@ class Plugin(BasePlugin):
 
     @hook
     def installwizard_restore(self, wizard, storage):
-        if storage.get('wallet_type') != 'trezor': 
+        if storage.get('wallet_type') != 'keepkey': 
             return
-        seed = wizard.enter_seed_dialog("Enter your Trezor seed", None, func=lambda x:True)
+        seed = wizard.enter_seed_dialog("Enter your KeepKey seed", None, func=lambda x:True)
         if not seed:
             return
-        wallet = TrezorWallet(storage)
+        wallet = KeepKeyWallet(storage)
         self.wallet = wallet
-        handler = TrezorQtHandler(wizard)
-        passphrase = handler.get_passphrase(_("Please enter your Trezor passphrase.") + '\n' + _("Press OK if you do not use one."))
+        handler = KeepKeyQtHandler(wizard)
+        passphrase = handler.get_passphrase(_("Please enter your KeepKey passphrase.") + '\n' + _("Press OK if you do not use one."))
         if passphrase is None:
             return
         password = wizard.password_dialog()
         wallet.add_seed(seed, password)
         wallet.add_cosigner_seed(seed, 'x/', password, passphrase)
         wallet.create_main_account(password)
-        # disable trezor plugin
+        # disable keepkey plugin
         self.set_enabled(False)
         return wallet
 
@@ -206,16 +206,16 @@ class Plugin(BasePlugin):
         update_label = lambda: current_label_label.setText("Label: %s" % get_label())
         d = QDialog()
         layout = QGridLayout(d)
-        layout.addWidget(QLabel("Trezor Options"),0,0)
+        layout.addWidget(QLabel("KeepKey Options"),0,0)
         layout.addWidget(QLabel("ID:"),1,0)
         layout.addWidget(QLabel(" %s" % device_id),1,1)
 
         def modify_label():
-            response = QInputDialog().getText(None, "Set New Trezor Label", "New Trezor Label:  (upon submission confirm on Trezor)")
+            response = QInputDialog().getText(None, "Set New KeepKey Label", "New KeepKey Label:  (upon submission confirm on KeepKey)")
             if not response[1]:
                 return
             new_label = str(response[0])
-            self.handler.show_message("Please confirm label change on Trezor")
+            self.handler.show_message("Please confirm label change on KeepKey")
             status = self.get_client().apply_settings(label=new_label)
             self.handler.stop()
             update_label()
@@ -353,8 +353,8 @@ class Plugin(BasePlugin):
 
 
 
-class TrezorWallet(BIP32_HD_Wallet):
-    wallet_type = 'trezor'
+class KeepKeyWallet(BIP32_HD_Wallet):
+    wallet_type = 'keepkey'
     root_derivation = "m/44'/0'"
 
     def __init__(self, storage):
@@ -398,7 +398,7 @@ class TrezorWallet(BIP32_HD_Wallet):
         self.create_account('Main account', None) #name, empty password
 
     def mnemonic_to_seed(self, mnemonic, passphrase):
-        # trezor uses bip39
+        # keepkey uses bip39
         import pbkdf2, hashlib, hmac
         PBKDF2_ROUNDS = 2048
         mnemonic = unicodedata.normalize('NFKD', ' '.join(mnemonic.split()))
@@ -435,7 +435,7 @@ class TrezorWallet(BIP32_HD_Wallet):
         pass
 
     def decrypt_message(self, pubkey, message, password):
-        raise BaseException( _('Decrypt method is not implemented in Trezor') )
+        raise BaseException( _('Decrypt method is not implemented in KeepKey') )
         #address = public_key_to_bc_address(pubkey.decode('hex'))
         #address_path = self.address_id(address)
         #address_n = self.get_client().expand_path(address_path)
@@ -510,22 +510,22 @@ class TrezorWallet(BIP32_HD_Wallet):
         return self.proper_device
 
 
-class TrezorGuiMixin(object):
+class KeepKeyGuiMixin(object):
 
     def __init__(self, *args, **kwargs):
-        super(TrezorGuiMixin, self).__init__(*args, **kwargs)
+        super(KeepKeyGuiMixin, self).__init__(*args, **kwargs)
 
     def callback_ButtonRequest(self, msg):
         if msg.code == 3:
-            message = "Confirm transaction outputs on Trezor device to continue"
+            message = "Confirm transaction outputs on KeepKey device to continue"
         elif msg.code == 8:
-            message = "Confirm transaction fee on Trezor device to continue"
+            message = "Confirm transaction fee on KeepKey device to continue"
         elif msg.code == 7:
-            message = "Confirm message to sign on Trezor device to continue"
+            message = "Confirm message to sign on KeepKey device to continue"
         elif msg.code == 10:
-            message = "Confirm address on Trezor device to continue"
+            message = "Confirm address on KeepKey device to continue"
         else:
-            message = "Check Trezor device to continue"
+            message = "Check KeepKey device to continue"
         self.handler.show_message(message)
         return proto.ButtonAck()
 
@@ -538,13 +538,13 @@ class TrezorGuiMixin(object):
             desc = 'new PIN again'
         else:
             desc = 'PIN'
-        pin = self.handler.get_pin("Please enter Trezor %s" % desc)
+        pin = self.handler.get_pin("Please enter KeepKey %s" % desc)
         if not pin:
             return proto.Cancel()
         return proto.PinMatrixAck(pin=pin)
 
     def callback_PassphraseRequest(self, req):
-        msg = _("Please enter your Trezor passphrase.")
+        msg = _("Please enter your KeepKey passphrase.")
         passphrase = self.handler.get_passphrase(msg)
         if passphrase is None:
             return proto.Cancel()
@@ -557,7 +557,7 @@ class TrezorGuiMixin(object):
         return proto.WordAck(word=word)
 
 
-class TrezorCmdLineHandler:
+class KeepKeyCmdLineHandler:
 
     def get_passphrase(self, msg):
         import getpass
@@ -578,18 +578,18 @@ class TrezorCmdLineHandler:
         print_msg(msg)
 
 
-class TrezorQtHandler:
+class KeepKeyQtHandler:
 
     def __init__(self, win):
         self.win = win
-        self.win.connect(win, SIGNAL('trezor_done'), self.dialog_stop)
+        self.win.connect(win, SIGNAL('keepkey_done'), self.dialog_stop)
         self.win.connect(win, SIGNAL('message_dialog'), self.message_dialog)
         self.win.connect(win, SIGNAL('pin_dialog'), self.pin_dialog)
         self.win.connect(win, SIGNAL('passphrase_dialog'), self.passphrase_dialog)
         self.done = threading.Event()
 
     def stop(self):
-        self.win.emit(SIGNAL('trezor_done'))
+        self.win.emit(SIGNAL('keepkey_done'))
 
     def show_message(self, msg):
         self.message = msg
@@ -627,7 +627,7 @@ class TrezorQtHandler:
 
     def passphrase_dialog(self):
         if type(self.win) is ElectrumWindow:
-            passphrase = self.win.password_dialog(_("Please enter your Trezor passphrase"))
+            passphrase = self.win.password_dialog(_("Please enter your KeepKey passphrase"))
             self.passphrase = unicodedata.normalize('NFKD', unicode(passphrase)) if passphrase else ''
         else:
             assert type(self.win) is InstallWizard
@@ -646,7 +646,7 @@ class TrezorQtHandler:
     def message_dialog(self):
         self.d = QDialog()
         self.d.setModal(1)
-        self.d.setWindowTitle('Please Check Trezor Device')
+        self.d.setWindowTitle('Please Check KeepKey Device')
         self.d.setWindowFlags(self.d.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
         l = QLabel(self.message)
         vbox = QVBoxLayout(self.d)
@@ -657,8 +657,8 @@ class TrezorQtHandler:
         self.d.hide()
 
 
-if TREZOR:
-    class QtGuiTrezorClient(ProtocolMixin, TrezorGuiMixin, BaseClient):
+if KEEPKEY:
+    class QtGuiKeepKeyClient(ProtocolMixin, KeepKeyGuiMixin, BaseClient):
         def call_raw(self, msg):
             try:
                 resp = BaseClient.call_raw(self, msg)
