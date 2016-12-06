@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from .exchange_rate import FxPlugin
-from electrum_dash.plugins import hook
+from electrum_ion.plugins import hook
 
 
 from kivy.event import EventDispatcher

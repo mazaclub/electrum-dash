@@ -125,11 +125,11 @@ Section
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum.exe" "" "$INSTDIR\electrum.exe" 0
 
-  ;Links dash: URI's to Electrum
-  WriteRegStr HKCU "Software\Classes\dash" "" "URL:dash Protocol"
-  WriteRegStr HKCU "Software\Classes\dash" "URL Protocol" ""
-  WriteRegStr HKCU "Software\Classes\dash" "DefaultIcon" "$\"$INSTDIR\electrum-dash.ico, 0$\""
-  WriteRegStr HKCU "Software\Classes\dash\shell\open\command" "" "$\"$INSTDIR\electrum-dash.exe$\" $\"%1$\""
+  ;Links ion: URI's to Electrum
+  WriteRegStr HKCU "Software\Classes\ion" "" "URL:ion Protocol"
+  WriteRegStr HKCU "Software\Classes\ion" "URL Protocol" ""
+  WriteRegStr HKCU "Software\Classes\ion" "DefaultIcon" "$\"$INSTDIR\electrum-ion.ico, 0$\""
+  WriteRegStr HKCU "Software\Classes\ion\shell\open\command" "" "$\"$INSTDIR\electrum-ion.exe$\" $\"%1$\""
 
   ;Adds an uninstaller possibilty to Windows Uninstall or change a program section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"

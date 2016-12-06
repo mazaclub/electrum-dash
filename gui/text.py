@@ -2,10 +2,10 @@ import tty, sys
 import curses, datetime, locale
 from decimal import Decimal
 
-from electrum_dash.util import format_satoshis, set_verbosity
-from electrum_dash.util import StoreDict
-from electrum_dash.bitcoin import is_valid, COIN, TYPE_ADDRESS
-from electrum_dash import Wallet, WalletStorage
+from electrum_ion.util import format_satoshis, set_verbosity
+from electrum_ion.util import StoreDict
+from electrum_ion.bitcoin import is_valid, COIN, TYPE_ADDRESS
+from electrum_ion import Wallet, WalletStorage
 
 _ = lambda x:x
 
@@ -19,7 +19,7 @@ class ElectrumGui:
         self.network = daemon.network
         storage = WalletStorage(config.get_wallet_path())
         if not storage.file_exists:
-            print "Wallet not found. try 'electrum-dash create'"
+            print "Wallet not found. try 'electrum-ion create'"
             exit()
 
         self.wallet = Wallet(storage)
@@ -309,7 +309,7 @@ class ElectrumGui:
 
     def do_send(self):
         if not is_valid(self.str_recipient):
-            self.show_message(_('Invalid Dash address'))
+            self.show_message(_('Invalid ION address'))
             return
         try:
             amount = int(Decimal(self.str_amount) * COIN)

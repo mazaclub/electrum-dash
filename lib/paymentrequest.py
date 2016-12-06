@@ -42,15 +42,15 @@ except ImportError:
 
 import bitcoin
 import util
-from electrum_dash.util import print_error
+from electrum_ion.util import print_error
 import transaction
 import x509
 import rsakey
 
 from bitcoin import TYPE_ADDRESS
 
-REQUEST_HEADERS = {'Accept': 'application/dash-paymentrequest', 'User-Agent': 'Electrum'}
-ACK_HEADERS = {'Content-Type':'application/dash-payment','Accept':'application/dash-paymentack','User-Agent':'Electrum'}
+REQUEST_HEADERS = {'Accept': 'application/ion-paymentrequest', 'User-Agent': 'Electrum'}
+ACK_HEADERS = {'Content-Type':'application/ion-payment','Accept':'application/ion-paymentack','User-Agent':'Electrum'}
 
 ca_path = requests.certs.where()
 ca_list, ca_keyID = x509.load_certificates(ca_path)

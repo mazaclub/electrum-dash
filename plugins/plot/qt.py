@@ -1,11 +1,11 @@
 from PyQt4.QtGui import *
-from electrum_dash.plugins import BasePlugin, hook
-from electrum_dash.i18n import _
+from electrum_ion.plugins import BasePlugin, hook
+from electrum_ion.i18n import _
 
 
 import datetime
-from electrum_dash.util import format_satoshis
-from electrum_dash.bitcoin import COIN
+from electrum_ion.util import format_satoshis
+from electrum_ion.bitcoin import COIN
 
 
 try:

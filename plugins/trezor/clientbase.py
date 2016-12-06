@@ -1,8 +1,8 @@
 import time
 
-from electrum_dash.i18n import _
-from electrum_dash.util import PrintError, UserCancelled
-from electrum_dash.wallet import BIP44_Wallet
+from electrum_ion.i18n import _
+from electrum_ion.util import PrintError, UserCancelled
+from electrum_ion.wallet import BIP44_Wallet
 
 
 class GuiMixin(object):

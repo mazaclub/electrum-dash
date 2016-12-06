@@ -4,8 +4,8 @@ from PyQt4.Qt import (QDialog, QInputDialog, QLineEdit,
                       QVBoxLayout, QLabel, SIGNAL)
 import PyQt4.QtCore as QtCore
 
-from electrum_dash.i18n import _
-from electrum_dash.plugins import hook
+from electrum_ion.i18n import _
+from electrum_ion.plugins import hook
 from .ledger import LedgerPlugin, BTChipWallet
 from ..hw_wallet.qt import QtHandlerBase
 

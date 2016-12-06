@@ -30,7 +30,7 @@
 
 import bitcoin
 from bitcoin import *
-from electrum_dash.util import print_error, profiler
+from electrum_ion.util import print_error, profiler
 import time
 import sys
 import struct

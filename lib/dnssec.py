@@ -182,7 +182,7 @@ dns.dnssec.validate = dns.dnssec._validate
 
 
 
-from electrum_dash.util import print_error
+from electrum_ion.util import print_error
 
 
 # hard-coded root KSK

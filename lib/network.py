@@ -43,14 +43,12 @@ from blockchain import Blockchain
 from version import ELECTRUM_VERSION, PROTOCOL_VERSION
 import masternode_manager
 
-DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
+DEFAULT_PORTS = {'t':'8000', 's':'8001', 'h':'9000', 'g':'9001'}
 
 TESTNET_SERVERS = {}
 MAINNET_SERVERS = {
-    'electrum.darkcointalk.org':DEFAULT_PORTS, # propulsion
-    'drk1.electrum-servers.us':DEFAULT_PORTS,  # elm4ever
-    'electrum.dash.siampm.com':DEFAULT_PORTS,  # thelazier
-    'electrum-drk.club':DEFAULT_PORTS,         # duffman
+    'localhost':DEFAULT_PORTS, # local
+    'electrum.ionomy.nl':DEFAULT_PORTS, # rdewilde
 }
 DEFAULT_SERVERS = TESTNET_SERVERS if TESTNET else MAINNET_SERVERS
 

@@ -27,7 +27,7 @@ import dns
 
 import bitcoin
 import dnssec
-from electrum_dash.util import StoreDict, print_error
+from electrum_ion.util import StoreDict, print_error
 from i18n import _
 
 
@@ -58,7 +58,7 @@ class Contacts(StoreDict):
                 'type': 'openalias',
                 'validated': validated
             }
-        raise Exception("Invalid Dash address or alias", k)
+        raise Exception("Invalid Ion address or alias", k)
 
     def resolve_openalias(self, url):
         # support email-style addresses, per the OA standard

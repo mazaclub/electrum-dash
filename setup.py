@@ -12,7 +12,7 @@ import argparse
 version = imp.load_source('version', 'lib/version.py')
 
 if sys.version_info[:3] < (2, 7, 0):
-    sys.exit("Error: Electrum-DASH requires Python version >= 2.7.0...")
+    sys.exit("Error: Electrum-ion requires Python version >= 2.7.0...")
 
 data_files = []
 
@@ -28,12 +28,12 @@ if platform.system() in ['Linux', 'FreeBSD', 'DragonFly']:
         else:
             usr_share = os.path.expanduser('~/.local/share')
     data_files += [
-        (os.path.join(usr_share, 'applications/'), ['electrum-dash.desktop']),
-        (os.path.join(usr_share, 'pixmaps/'), ['icons/electrum-dash.png'])
+        (os.path.join(usr_share, 'applications/'), ['electrum-ion.desktop']),
+        (os.path.join(usr_share, 'pixmaps/'), ['icons/electrum-ion.png'])
     ]
 
 setup(
-    name="Electrum-DASH",
+    name="Electrum-ion",
     version=version.ELECTRUM_VERSION,
     install_requires=[
         'slowaes>=0.1a1',
@@ -49,42 +49,42 @@ setup(
     ],
     dependency_links=[
         'git+https://github.com/mazaclub/x11_hash@1.4#egg=x11_hash-1.4',
-        'git+https://github.com/electrum-dash/python-trezor@v0.6.13#egg=trezor',
+        'git+https://github.com/electrum-ion/python-trezor@v0.6.13#egg=trezor',
     ],
     packages=[
-        'electrum_dash',
-        'electrum_dash_gui',
-        'electrum_dash_gui.qt',
-        'electrum_dash_plugins',
-        'electrum_dash_plugins.audio_modem',
-        'electrum_dash_plugins.cosigner_pool',
-        'electrum_dash_plugins.email_requests',
-        'electrum_dash_plugins.exchange_rate',
-        'electrum_dash_plugins.hw_wallet',
-        'electrum_dash_plugins.keepkey',
-        'electrum_dash_plugins.labels',
-        'electrum_dash_plugins.ledger',
-        'electrum_dash_plugins.plot',
-        'electrum_dash_plugins.trezor',
-        'electrum_dash_plugins.virtualkeyboard',
+        'electrum_ion',
+        'electrum_ion_gui',
+        'electrum_ion_gui.qt',
+        'electrum_ion_plugins',
+        'electrum_ion_plugins.audio_modem',
+        'electrum_ion_plugins.cosigner_pool',
+        'electrum_ion_plugins.email_requests',
+        'electrum_ion_plugins.exchange_rate',
+        'electrum_ion_plugins.hw_wallet',
+        'electrum_ion_plugins.keepkey',
+        'electrum_ion_plugins.labels',
+        'electrum_ion_plugins.ledger',
+        'electrum_ion_plugins.plot',
+        'electrum_ion_plugins.trezor',
+        'electrum_ion_plugins.virtualkeyboard',
     ],
     package_dir={
-        'electrum_dash': 'lib',
-        'electrum_dash_gui': 'gui',
-        'electrum_dash_plugins': 'plugins',
+        'electrum_ion': 'lib',
+        'electrum_ion_gui': 'gui',
+        'electrum_ion_plugins': 'plugins',
     },
     package_data={
-        'electrum_dash': [
+        'electrum_ion': [
             'www/index.html',
             'wordlist/*.txt',
             'locale/*/LC_MESSAGES/electrum.mo',
         ]
     },
-    scripts=['electrum-dash'],
+    scripts=['electrum-ion'],
     data_files=data_files,
-    description="Lightweight Dashpay Wallet",
+    description="Lightweight Ion-pay Wallet",
     author="mazaclub",
     license="MIT License",
-    url="https://electrum-dash.org",
-    long_description="""Lightweight Dashpay Wallet"""
+    url="https://ionomy.com/electrum",
+    long_description="""Lightweight Ion-pay Wallet"""
 )

@@ -1,5 +1,5 @@
-from electrum_dash.i18n import _
-from electrum_dash.plugins import run_hook
+from electrum_ion.i18n import _
+from electrum_ion.plugins import run_hook
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -47,7 +47,7 @@ class ScanQRTextEdit(ButtonsTextEdit, MessageBoxMixin):
         self.setText(data)
 
     def qr_input(self):
-        from electrum_dash import qrscanner, get_config
+        from electrum_ion import qrscanner, get_config
         try:
             data = qrscanner.scan_qr(get_config())
         except BaseException as e:

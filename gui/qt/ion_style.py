@@ -1,11 +1,11 @@
-"""Dash look and feel."""
+"""Ion look and feel."""
 
-dash_stylesheet = """
+ion_stylesheet = """
 
 /* Lite Mode -- cloned from "CleanLook" theme */
 #main_window
 {
-    border-image: url(:/icons/bg.png) 0 0 0 0 stretch stretch;
+    /*border-image: url(:/icons/bg.png) 0 0 0 0 stretch stretch;*/
 
 }
 
@@ -68,7 +68,7 @@ stop: 0 #A5CFFA, stop: 1 #72B2F8);
 
 
 /**********************/
-/* DASH Evolution CSS */
+/* ION Evolution CSS */
 /*
 0. OSX Reset
 1. Navigation Bar
@@ -105,7 +105,9 @@ QWidget { /* Set default style for QWidget, override in following statements */
 }
 
 #main_window_nav_bar QTabBar {
-    background: url(:/icons/navlogo.png) no-repeat left top;
+    /* background: url(:/icons/navlogo.png) no-repeat left top; */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0,
+stop: 0 #022844, stop: 1 #0363A5);
 }
 
 QTabWidget#main_window_nav_bar::tab-bar {
@@ -371,7 +373,7 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    border-image: url(':/icons/dash_downArrow.png') 0 0 0 0 stretch stretch;
+    border-image: url(':/icons/ion_downArrow.png') 0 0 0 0 stretch stretch;
 }
 
 QComboBox QListView {
@@ -553,19 +555,19 @@ QScrollBar:up-arrow, QScrollBar:down-arrow, QScrollBar:left-arrow, QScrollBar:ri
 }
 
 QScrollBar:up-arrow {
-    background-image: url(':/icons/dash_upArrow_small.png');
+    background-image: url(':/icons/ion_upArrow_small.png');
 }
 
 QScrollBar:down-arrow {
-    background-image: url(':/icons/dash_downArrow_small.png');
+    background-image: url(':/icons/ion_downArrow_small.png');
 }
 
 QScrollBar:left-arrow {
-    background-image: url(':/icons/dash_leftArrow_small.png');
+    background-image: url(':/icons/ion_leftArrow_small.png');
 }
 
 QScrollBar:right-arrow {
-    background-image: url(':/icons/dash_rightArrow_small.png');
+    background-image: url(':/icons/ion_rightArrow_small.png');
 }
 
 

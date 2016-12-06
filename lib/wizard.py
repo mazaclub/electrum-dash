@@ -23,15 +23,15 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from electrum_dash import WalletStorage
-from electrum_dash.plugins import run_hook
+from electrum_ion import WalletStorage
+from electrum_ion.plugins import run_hook
 from util import PrintError
 from wallet import Wallet
 from i18n import _
 
-MSG_GENERATING_WAIT = _("Electrum-DASH is generating your addresses, please wait...")
+MSG_GENERATING_WAIT = _("Electrum-ION is generating your addresses, please wait...")
 MSG_ENTER_ANYTHING = _("Please enter a seed phrase, a master key, a list of "
-                       "Dash addresses, or a list of private keys")
+                       "Ion addresses, or a list of private keys")
 MSG_ENTER_SEED_OR_MPK = _("Please enter a seed phrase or a master key (xpub or xprv):")
 MSG_VERIFY_SEED = _("Your seed is important!\nTo make sure that you have properly saved your seed, please retype it here.")
 MSG_COSIGNER = _("Please enter the master public key of cosigner #%d:")

@@ -36,17 +36,17 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 
-from electrum_dash.i18n import _, set_language
-from electrum_dash.plugins import run_hook
-from electrum_dash import SimpleConfig, Wallet, WalletStorage
-from electrum_dash.paymentrequest import InvoiceStore
-from electrum_dash.contacts import Contacts
-from electrum_dash.synchronizer import Synchronizer
-from electrum_dash.verifier import SPV
-from electrum_dash.util import DebugMem
-from electrum_dash.wallet import Abstract_Wallet
+from electrum_ion.i18n import _, set_language
+from electrum_ion.plugins import run_hook
+from electrum_ion import SimpleConfig, Wallet, WalletStorage
+from electrum_ion.paymentrequest import InvoiceStore
+from electrum_ion.contacts import Contacts
+from electrum_ion.synchronizer import Synchronizer
+from electrum_ion.verifier import SPV
+from electrum_ion.util import DebugMem
+from electrum_ion.wallet import Abstract_Wallet
 from installwizard import InstallWizard
-from dash_style import dash_stylesheet
+from ion_style import ion_stylesheet
 
 
 try:
@@ -87,7 +87,7 @@ class ElectrumGui:
         self.efilter = OpenFileEventFilter(self.windows)
         self.app = QApplication(sys.argv)
         self.app.installEventFilter(self.efilter)
-        self.app.setStyleSheet(dash_stylesheet)
+        self.app.setStyleSheet(ion_stylesheet)
         self.timer = Timer()
         # shared objects
         self.invoices = InvoiceStore(self.config)
@@ -95,7 +95,7 @@ class ElectrumGui:
         # init tray
         self.dark_icon = self.config.get("dark_icon", False)
         self.tray = QSystemTrayIcon(self.tray_icon(), None)
-        self.tray.setToolTip('Electrum-DASH')
+        self.tray.setToolTip('electrum-ion')
         self.tray.activated.connect(self.tray_activated)
         self.build_tray_menu()
         self.tray.show()
@@ -112,7 +112,7 @@ class ElectrumGui:
             submenu.addAction(_("Close"), window.close)
         m.addAction(_("Dark/Light"), self.toggle_tray_icon)
         m.addSeparator()
-        m.addAction(_("Exit Electrum-DASH"), self.close)
+        m.addAction(_("Exit electrum-ion"), self.close)
         self.tray.setContextMenu(m)
 
     def tray_icon(self):

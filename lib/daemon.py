@@ -32,8 +32,8 @@ import jsonrpclib
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer, SimpleJSONRPCRequestHandler
 
 from network import Network
-from electrum_dash.util import json_decode, DaemonThread
-from electrum_dash.util import print_msg, print_error, print_stderr
+from electrum_ion.util import json_decode, DaemonThread
+from electrum_ion.util import print_msg, print_error, print_stderr
 from wallet import WalletStorage, Wallet
 from wizard import WizardBase
 from commands import known_commands, Commands
@@ -230,6 +230,6 @@ class Daemon(DaemonThread):
         gui_name = config.get('gui', 'qt')
         if gui_name in ['lite', 'classic']:
             gui_name = 'qt'
-        gui = __import__('electrum_dash_gui.' + gui_name, fromlist=['electrum_dash_gui'])
+        gui = __import__('electrum_ion_gui.' + gui_name, fromlist=['electrum_ion_gui'])
         self.gui = gui.ElectrumGui(config, self, plugins)
         self.gui.main()

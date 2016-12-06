@@ -33,8 +33,8 @@ from PyQt4.QtCore import *
 import PyQt4.QtCore as QtCore
 import PyQt4.QtGui as QtGui
 
-from electrum_dash_gui.qt.qrcodewidget import QRCodeWidget
-from electrum_dash.i18n import _
+from electrum_ion_gui.qt.qrcodewidget import QRCodeWidget
+from electrum_ion.i18n import _
 
 if platform.system() == 'Windows':
     MONOSPACE_FONT = 'Lucida Console'
@@ -50,7 +50,7 @@ class QR_Window(QWidget):
     def __init__(self, win):
         QWidget.__init__(self)
         self.win = win
-        self.setWindowTitle('Electrum-DASH - '+_('Payment Request'))
+        self.setWindowTitle('electrum-ion - '+_('Payment Request'))
         self.setMinimumSize(800, 250)
         self.address = ''
         self.label = ''

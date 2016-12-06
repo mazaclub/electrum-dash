@@ -219,7 +219,7 @@ def android_data_dir():
     return PythonActivity.mActivity.getFilesDir().getPath() + '/data'
 
 def android_headers_path():
-    path = android_ext_dir() + '/org.electrum_dash.electrum_dash/' + headers_file_name()
+    path = android_ext_dir() + '/org.electrum_ion.electrum_ion/' + headers_file_name()
     d = os.path.dirname(path)
     if not os.path.exists(d):
         os.mkdir(d)
@@ -229,7 +229,7 @@ def android_check_data_dir():
     """ if needed, move old directory to sandbox """
     ext_dir = android_ext_dir()
     data_dir = android_data_dir()
-    old_electrum_dir = ext_dir + '/electrum-dash'
+    old_electrum_dir = ext_dir + '/electrum-ion'
     if not os.path.exists(data_dir) and os.path.exists(old_electrum_dir):
         import shutil
         new_headers_path = android_headers_path()
@@ -249,11 +249,11 @@ def get_headers_path(config):
 
 def user_dir():
     if "HOME" in os.environ:
-        return os.path.join(os.environ["HOME"], ".electrum-dash")
+        return os.path.join(os.environ["HOME"], ".electrum-ion")
     elif "APPDATA" in os.environ:
-        return os.path.join(os.environ["APPDATA"], "Electrum-DASH")
+        return os.path.join(os.environ["APPDATA"], "Electrum-ION")
     elif "LOCALAPPDATA" in os.environ:
-        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-DASH")
+        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-ION")
     elif 'ANDROID_DATA' in os.environ:
         return android_check_data_dir()
     else:
@@ -353,14 +353,14 @@ def time_difference(distance_in_time, include_seconds):
         return "over %d years" % (round(distance_in_minutes / 525600))
 
 block_explorer_info = {
-    'Dash.org': ('http://explorer.dash.org',
+    'Ion.org': ('http://explorer.ion.org',
                         {'tx': 'tx', 'addr': 'address'}),
-    'Bchain.info': ('https://bchain.info/DASH',
+    'Bchain.info': ('https://bchain.info/ION',
                         {'tx': 'tx', 'addr': 'addr'}),
 }
 
 def block_explorer(config):
-    return config.get('block_explorer', 'Dash.org')
+    return config.get('block_explorer', 'Ion.org')
 
 def block_explorer_tuple(config):
     return block_explorer_info.get(block_explorer(config))
@@ -389,8 +389,8 @@ def parse_URI(uri, on_pr=None):
         return {'address': uri}
 
     u = urlparse.urlparse(uri)
-    if u.scheme != 'dash':
-        raise BaseException("Not a Dash URI")
+    if u.scheme != 'ion':
+        raise BaseException("Not a Ion URI")
     address = u.path
 
     # python for android fails to parse query
@@ -458,7 +458,7 @@ def create_URI(addr, amount, message):
         if type(message) == unicode:
             message = message.encode('utf8')
         query.append('message=%s'%urllib.quote(message))
-    p = urlparse.ParseResult(scheme='dash', netloc='', path=addr, params='', query='&'.join(query), fragment='')
+    p = urlparse.ParseResult(scheme='ion', netloc='', path=addr, params='', query='&'.join(query), fragment='')
     return urlparse.urlunparse(p)
 
 

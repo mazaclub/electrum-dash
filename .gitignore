@@ -4,7 +4,7 @@
 build/
 dist/
 *.egg/
-/electrum-dash.py
+/electrum-ion.py
 contrib/pyinstaller/
 Electrum*.egg-info/
 gui/qt/icons_rc.py
@@ -15,4 +15,5 @@ packages
 env/
 .tox/
 .buildozer/
+.idea
 bin/

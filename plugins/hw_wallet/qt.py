@@ -27,11 +27,11 @@
 import threading
 
 from PyQt4.Qt import QVBoxLayout, QLabel, SIGNAL
-from electrum_dash_gui.qt.password_dialog import PasswordDialog, PW_PASSPHRASE
-from electrum_dash_gui.qt.util import *
+from electrum_ion_gui.qt.password_dialog import PasswordDialog, PW_PASSPHRASE
+from electrum_ion_gui.qt.util import *
 
-from electrum_dash.i18n import _
-from electrum_dash.util import PrintError
+from electrum_ion.i18n import _
+from electrum_ion.util import PrintError
 
 # The trickiest thing about this handler was getting windows properly
 # parented on MacOSX.

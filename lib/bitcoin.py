@@ -30,7 +30,7 @@ import re
 import hmac
 
 import version
-from electrum_dash.util import print_error, InvalidPassword
+from electrum_ion.util import print_error, InvalidPassword
 
 import ecdsa
 import aes
@@ -42,14 +42,14 @@ import x11_hash
 # You may also need to remove the 'server' option from your config file.
 # Otherwise, you may end up getting headers for the wrong chain!
 TESTNET = False
-PUBKEY_ADDR = 140 if TESTNET else 76
-SCRIPT_ADDR = 19 if TESTNET else 16
+PUBKEY_ADDR = 103 if TESTNET else 127
+SCRIPT_ADDR = 88 if TESTNET else 196
 WIF = 239 if TESTNET else 204
 
 ################################## transactions
 
 RECOMMENDED_FEE = 50000
-COINBASE_MATURITY = 100
+COINBASE_MATURITY = 30
 COIN = 100000000
 
 # supported types of transction outputs
@@ -416,7 +416,7 @@ from ecdsa.util import string_to_number, number_to_string
 def msg_magic(message):
     varint = var_int(len(message))
     encoded_varint = "".join([chr(int(varint[i:i+2], 16)) for i in xrange(0, len(varint), 2)])
-    return "\x19DarkCoin Signed Message:\n" + encoded_varint + message
+    return "\x19ion Signed Message:\n" + encoded_varint + message
 
 
 def verify_message(address, signature, message):

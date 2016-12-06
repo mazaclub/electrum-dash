@@ -3,13 +3,13 @@ from struct import unpack
 import hashlib
 import time
 
-import electrum_dash
-from electrum_dash.bitcoin import EncodeBase58Check, DecodeBase58Check, bc_address_to_hash_160, hash_160_to_bc_address, TYPE_ADDRESS, PUBKEY_ADDR, SCRIPT_ADDR
-from electrum_dash.i18n import _
-from electrum_dash.plugins import BasePlugin, hook
+import electrum_ion
+from electrum_ion.bitcoin import EncodeBase58Check, DecodeBase58Check, bc_address_to_hash_160, hash_160_to_bc_address, TYPE_ADDRESS, PUBKEY_ADDR, SCRIPT_ADDR
+from electrum_ion.i18n import _
+from electrum_ion.plugins import BasePlugin, hook
 from ..hw_wallet import BIP44_HW_Wallet
 from ..hw_wallet import HW_PluginBase
-from electrum_dash.util import format_satoshis_plain, print_error
+from electrum_ion.util import format_satoshis_plain, print_error
 
 
 def setAlternateCoinVersions(self, regular, p2sh):

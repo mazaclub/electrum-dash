@@ -8,11 +8,11 @@ import traceback
 import csv
 from decimal import Decimal
 
-from electrum_dash.bitcoin import COIN
-from electrum_dash.plugins import BasePlugin, hook
-from electrum_dash.i18n import _
-from electrum_dash.util import PrintError, ThreadJob
-from electrum_dash.util import format_satoshis
+from electrum_ion.bitcoin import COIN
+from electrum_ion.plugins import BasePlugin, hook
+from electrum_ion.i18n import _
+from electrum_ion.util import PrintError, ThreadJob
+from electrum_ion.util import format_satoshis
 
 
 # See https://en.wikipedia.org/wiki/ISO_4217

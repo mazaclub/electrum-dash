@@ -25,7 +25,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from electrum_dash.i18n import _
+from electrum_ion.i18n import _
 
 from util import *
 from qrtextedit import ShowQRTextEdit, ScanQRTextEdit
@@ -40,7 +40,7 @@ def icon_filename(sid):
 
 class SeedDialog(WindowModalDialog):
     def __init__(self, parent, seed, imported_keys):
-        WindowModalDialog.__init__(self, parent, ('Electrum-DASH - ' + _('Seed')))
+        WindowModalDialog.__init__(self, parent, ('electrum-ion - ' + _('Seed')))
         self.setMinimumWidth(400)
         vbox = QVBoxLayout(self)
         vbox.addLayout(SeedWarningLayout(seed).layout())

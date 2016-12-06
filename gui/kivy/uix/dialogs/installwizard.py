@@ -1,5 +1,5 @@
-from electrum_dash import Wallet
-from electrum_dash_gui.kivy.i18n import _
+from electrum_ion import Wallet
+from electrum_ion_gui.kivy.i18n import _
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -117,7 +117,7 @@ class InstallWizard(Widget):
         self.waiting_dialog(task, msg, self.terminate)
 
     def create(self):
-        from electrum_dash.wallet import BIP32_Wallet
+        from electrum_ion.wallet import BIP32_Wallet
         seed = BIP32_Wallet.make_seed()
         msg = _("If you forget your PIN or lose your device, your seed phrase will be the "
                 "only way to recover your funds.")

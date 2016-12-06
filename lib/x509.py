@@ -27,7 +27,7 @@
 from datetime import datetime
 import sys
 import util
-from electrum_dash.util import profiler, print_error
+from electrum_ion.util import profiler, print_error
 import ecdsa
 import hashlib
 

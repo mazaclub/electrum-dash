@@ -4,15 +4,15 @@ import threading
 from PyQt4.Qt import Qt
 from PyQt4.Qt import QGridLayout, QInputDialog, QPushButton
 from PyQt4.Qt import QVBoxLayout, QLabel, SIGNAL
-from electrum_dash_gui.qt.main_window import StatusBarButton
-from electrum_dash_gui.qt.util import *
+from electrum_ion_gui.qt.main_window import StatusBarButton
+from electrum_ion_gui.qt.util import *
 from .plugin import TIM_NEW, TIM_RECOVER, TIM_MNEMONIC
 from ..hw_wallet.qt import QtHandlerBase
 
-from electrum_dash.i18n import _
-from electrum_dash.plugins import hook, DeviceMgr
-from electrum_dash.util import PrintError, UserCancelled
-from electrum_dash.wallet import Wallet, BIP44_Wallet
+from electrum_ion.i18n import _
+from electrum_ion.plugins import hook, DeviceMgr
+from electrum_ion.util import PrintError, UserCancelled
+from electrum_ion.wallet import Wallet, BIP44_Wallet
 
 PASSPHRASE_HELP_SHORT =_(
     "Passphrases allow you to access new wallets, each "
