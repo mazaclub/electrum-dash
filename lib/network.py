@@ -45,10 +45,12 @@ import masternode_manager
 
 DEFAULT_PORTS = {'t':'50001', 's':'8001', 'h':'9000', 'g':'9001'}
 
-TESTNET_SERVERS = {}
+TESTNET_SERVERS = {
+    'test.electrum.ionomy.nl':DEFAULT_PORTS
+}
 MAINNET_SERVERS = {
     'localhost':DEFAULT_PORTS, # local
-    'electrum.ionomy.nl':DEFAULT_PORTS, # rdewilde
+    'main.electrum.ionomy.nl':DEFAULT_PORTS # rdewilde
 }
 DEFAULT_SERVERS = TESTNET_SERVERS if TESTNET else MAINNET_SERVERS
 
