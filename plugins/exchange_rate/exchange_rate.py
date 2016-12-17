@@ -95,7 +95,7 @@ class ExchangeBase(PrintError):
 
 class Bittrex(ExchangeBase):
     def get_rates(self, ccy):
-        json = self.get_json('bittrex.com', '/api/v1.1/public/getticker?market=BTC-DASH')
+        json = self.get_json('bittrex.com', '/api/v1.1/public/getticker?market=BTC-ION')
         quote_currencies = {}
         if not json.get('success', False):
             return quote_currencies
@@ -107,13 +107,13 @@ class Poloniex(ExchangeBase):
     def get_rates(self, ccy):
         json = self.get_json('poloniex.com', '/public?command=returnTicker')
         quote_currencies = {}
-        dash_ticker = json.get('BTC_DASH')
+        dash_ticker = json.get('BTC_ION')
         quote_currencies['BTC'] = Decimal(dash_ticker['last'])
         return quote_currencies
 
 class CoinMarketCap(ExchangeBase):
     def get_rates(self, ccy):
-        json = self.get_json('api.coinmarketcap.com', '/v1/ticker/dash/')
+        json = self.get_json('api.coinmarketcap.com', '/v1/ticker/ion/')
         quote_currencies = {}
         if not isinstance(json, list):
             return quote_currencies

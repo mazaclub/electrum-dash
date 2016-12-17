@@ -137,11 +137,11 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.completions = QStringListModel()
 
         self.tabs = tabs = QTabWidget(self)
-        tabs.addTab(self.create_history_tab(), _('History') )
-        tabs.addTab(self.create_send_tab(), _('Send') )
+        tabs.addTab(self.create_history_tab(), _('Home') )
         tabs.addTab(self.create_receive_tab(), _('Receive') )
-        tabs.addTab(self.create_addresses_tab(), _('Addresses') )
+        tabs.addTab(self.create_send_tab(), _('Send') )
         tabs.addTab(self.create_contacts_tab(), _('Contacts') )
+        tabs.addTab(self.create_addresses_tab(), _('Addresses') )
         # Disabled until API is stable.
 #        tabs.addTab(self.create_proposals_tab(), _('Budget Proposals'))
         tabs.addTab(self.create_console_tab(), _('Console') )
@@ -1882,7 +1882,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
     def create_status_bar(self):
 
         sb = QStatusBar()
-        sb.setFixedHeight(35)
+        sb.setFixedHeight(40)
         qtVersion = qVersion()
 
         self.balance_label = QLabel("")

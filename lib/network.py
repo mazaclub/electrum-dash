@@ -43,7 +43,7 @@ from blockchain import Blockchain
 from version import ELECTRUM_VERSION, PROTOCOL_VERSION
 import masternode_manager
 
-DEFAULT_PORTS = {'t':'8000', 's':'8001', 'h':'9000', 'g':'9001'}
+DEFAULT_PORTS = {'t':'50001', 's':'8001', 'h':'9000', 'g':'9001'}
 
 TESTNET_SERVERS = {}
 MAINNET_SERVERS = {
@@ -520,7 +520,7 @@ class Network(util.DaemonThread):
                 self.print_error("recommended fee", self.fee)
                 self.notify('fee')
         elif method == 'blockchain.relayfee':
-            if error is None:
+            if error is None and result is not None:
                 self.relay_fee = int(result * COIN)
                 self.print_error("relayfee", self.relay_fee)
         elif method == 'blockchain.block.get_chunk':
