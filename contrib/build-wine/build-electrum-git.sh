@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # You probably need to update only this link
-ELECTRUM_GIT_URL=git://github.com/spesmilo/electrum.git
+ELECTRUM_GIT_URL=git://github.com/rdewilde/electrum-ion.git
 BRANCH=master
-NAME_ROOT=electrum
+NAME_ROOT=electrum-ion
 
 
 # These settings probably don't need any change
@@ -40,7 +40,7 @@ cd ..
 
 rm -rf $WINEPREFIX/drive_c/electrum
 cp -r electrum-git $WINEPREFIX/drive_c/electrum
-cp electrum-git/LICENCE .
+cp electrum-git/LICENSE .
 
 # add python packages (built with make_packages)
 cp -r ../../../packages $WINEPREFIX/drive_c/electrum/
