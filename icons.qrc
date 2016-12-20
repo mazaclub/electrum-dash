@@ -2,7 +2,7 @@
   <qresource prefix="/" >
     <file>icons/electrum-ion.png</file>
     <file>icons/electrum-ion-logo.png</file>
-    <file>icons/electrum-ion.ico</file>
+    <file>icons/electrum.ico</file>
     <file>icons/clock1.png</file>
     <file>icons/clock2.png</file>
     <file>icons/clock3.png</file>

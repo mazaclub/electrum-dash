@@ -13,7 +13,8 @@ MiniWindow QPushButton {
 }
 
 #send_button{
-    color: #FFF;
+    background-color: #00adf6;
+    color: white;
     /*border: 1px solid #3786E6;*/
     /*border-radius: 4px;*/
     /*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #72B2F8, stop: 1 #3484E6);*/
@@ -179,11 +180,21 @@ QLabel {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #0C1C24, stop: 1 #3A2C4B);
     color: #fff;
 }
+#main_window_container QPushButton {
+    /* Buttons
+    background-color: #00adf6;
+    color: white;*/
+}
 
-#history_container, #send_container, #receive_container, #contacts_container, #addresses_container, #console_container {
+#history_container , #send_container, #receive_container, #contacts_container, #addresses_container, #console_container {
     margin: 20;
     background-color: white;
 }
+
+#history_container QPushButton, #send_container QPushButton, #receive_container QPushButton, #contacts_container QPushButton, #addresses_container QPushButton, #console_container QPushButton {
+    border: 1px solid #00adf6;
+}
+
 
 /* History Container */
 #history_container {
@@ -312,9 +323,8 @@ QLabel { /* Base Text Size & Color */
 
 QPushButton { /* Global Button Style */
     /*background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: .01 #64ACD2, stop: .1 #3398CC, stop: .95 #3398CC, stop: 1 #1D80B5);*/
-    border:0;
-    border-radius:3px;
-    color:#ffffff;
+    border-radius:6px;
+    color:#00adf6;
     /* font-size:12px; */
     font-weight:bold;
     padding-left:25px;
