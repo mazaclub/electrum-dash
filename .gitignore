@@ -17,3 +17,6 @@ env/
 .buildozer/
 .idea
 bin/
+/contrib/build-wine/tmp/
+/contrib/build-wine/dist/
+/contrib/build-wine/build/
