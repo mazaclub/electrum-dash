@@ -33,7 +33,7 @@ import json
 import copy
 import re
 import stat
-import x11_hash # dummy import to build win bin
+from x11_hash import getPoWHash
 from functools import partial
 from unicodedata import normalize
 from collections import namedtuple
