@@ -26,6 +26,7 @@
 import os, sys, re, json
 import platform
 import shutil
+import x11_hash
 from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
