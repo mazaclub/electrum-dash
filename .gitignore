@@ -1,13 +1,10 @@
 ####-*.patch
-.DS_Store
-gui/icons_rc.py
-lib/icons_rc.py
 *.pyc
 *.swp
 build/
 dist/
 *.egg/
-/electrum-dash.py
+/electrum-ion.py
 contrib/pyinstaller/
 Electrum*.egg-info/
 gui/qt/icons_rc.py
@@ -17,3 +14,9 @@ locale/
 packages
 env/
 .tox/
+.buildozer/
+.idea
+bin/
+/contrib/build-wine/tmp/
+/contrib/build-wine/dist/
+/contrib/build-wine/build/

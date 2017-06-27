@@ -4,18 +4,25 @@
 # Electrum - lightweight Bitcoin client
 # Copyright (C) 2011 thomasv@gitorious
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import hashlib
 import base64
@@ -23,20 +30,33 @@ import re
 import hmac
 
 import version
-from util import print_error, InvalidPassword
+from electrum_ion.util import print_error, InvalidPassword
 
 import ecdsa
 import aes
 
 import x11_hash
 
+# NOTE: This switch represents more of a hack than an option.
+# If you change its value, be sure to delete your 'recent_servers' file.
+# You may also need to remove the 'server' option from your config file.
+# Otherwise, you may end up getting headers for the wrong chain!
+TESTNET = False
+PUBKEY_ADDR = 127 if TESTNET else 103
+SCRIPT_ADDR = 196 if TESTNET else 88
+WIF = 239 if TESTNET else 204
+
 ################################## transactions
 
-DUST_THRESHOLD = 546
-MIN_RELAY_TX_FEE = 1000
 RECOMMENDED_FEE = 50000
-COINBASE_MATURITY = 100
+COINBASE_MATURITY = 30
 COIN = 100000000
+
+# supported types of transction outputs
+TYPE_ADDRESS = 0
+TYPE_PUBKEY  = 1
+TYPE_SCRIPT  = 2
+
 
 # AES encryption
 EncodeAES = lambda secret, s: base64.b64encode(aes.encryptData(secret,s))
@@ -202,21 +222,15 @@ def i2o_ECPublicKey(pubkey, compressed=False):
 ############ functions from pywallet #####################
 
 def hash_160(public_key):
-    try:
-        md = hashlib.new('ripemd160')
-        md.update(sha256(public_key))
-        return md.digest()
-    except Exception:
-        import ripemd
-        md = ripemd.new(sha256(public_key))
-        return md.digest()
+    md = hashlib.new('ripemd160')
+    md.update(sha256(public_key))
+    return md.digest()
 
-
-def public_key_to_bc_address(public_key):
+def public_key_to_bc_address(public_key, addrtype = PUBKEY_ADDR):
     h160 = hash_160(public_key)
-    return hash_160_to_bc_address(h160)
+    return hash_160_to_bc_address(h160, addrtype)
 
-def hash_160_to_bc_address(h160, addrtype = 76):
+def hash_160_to_bc_address(h160, addrtype = PUBKEY_ADDR):
     vh160 = chr(addrtype) + h160
     h = Hash(vh160)
     addr = vh160 + h[0:4]
@@ -304,15 +318,17 @@ def PrivKeyToSecret(privkey):
     return privkey[9:9+32]
 
 
-def SecretToASecret(secret, compressed=False, addrtype=76):
-    vchIn = chr((addrtype+128)&255) + secret
+def SecretToASecret(secret, compressed=False):
+    vchIn = chr(WIF) + secret
     if compressed: vchIn += '\01'
     return EncodeBase58Check(vchIn)
 
-def ASecretToSecret(key, addrtype=76):
+def ASecretToSecret(key):
     vch = DecodeBase58Check(key)
-    if vch and vch[0] == chr((addrtype+128)&255):
+    if vch and vch[0] == chr(WIF):
         return vch[1:]
+    elif is_minikey(key):
+        return minikey_to_private_key(key)
     else:
         return False
 
@@ -364,7 +380,7 @@ def is_address(addr):
         addrtype, h = bc_address_to_hash_160(addr)
     except Exception:
         return False
-    if addrtype not in [76, 16]:
+    if addrtype not in [PUBKEY_ADDR, SCRIPT_ADDR]:
         return False
     return addr == hash_160_to_bc_address(h, addrtype)
 
@@ -379,6 +395,19 @@ def is_private_key(key):
 
 ########### end pywallet functions #######################
 
+def is_minikey(text):
+    # Minikeys are typically 22 or 30 characters, but this routine
+    # permits any length of 20 or more provided the minikey is valid.
+    # A valid minikey must begin with an 'S', be in base58, and when
+    # suffixed with '?' have its SHA256 hash begin with a zero byte.
+    # They are widely used in Casascius physical bitoins.
+    return (len(text) >= 20 and text[0] == 'S'
+            and all(c in __b58chars for c in text)
+            and ord(sha256(text + '?')[0]) == 0)
+
+def minikey_to_private_key(text):
+    return sha256(text)
+
 from ecdsa.ecdsa import curve_secp256k1, generator_secp256k1
 from ecdsa.curves import SECP256k1
 from ecdsa.ellipticcurve import Point
@@ -387,7 +416,7 @@ from ecdsa.util import string_to_number, number_to_string
 def msg_magic(message):
     varint = var_int(len(message))
     encoded_varint = "".join([chr(int(varint[i:i+2], 16)) for i in xrange(0, len(varint), 2)])
-    return "\x18DarkCoin Signed Message:\n" + encoded_varint + message
+    return "\x19ion Signed Message:\n" + encoded_varint + message
 
 
 def verify_message(address, signature, message):
@@ -473,6 +502,19 @@ class MyVerifyingKey(ecdsa.VerifyingKey):
         return klass.from_public_point( Q, curve )
 
 
+class MySigningKey(ecdsa.SigningKey):
+    """Enforce low S values in signatures"""
+
+    def sign_number(self, number, entropy=None, k=None):
+        curve = SECP256k1
+        G = curve.generator
+        order = G.order()
+        r, s = ecdsa.SigningKey.sign_number(self, number, entropy, k)
+        if s > order/2:
+            s = order - s
+        return r, s
+
+
 class EC_KEY(object):
 
     def __init__( self, k ):
@@ -485,7 +527,7 @@ class EC_KEY(object):
         return point_to_ser(self.pubkey.point, compressed).encode('hex')
 
     def sign(self, msg_hash):
-        private_key = ecdsa.SigningKey.from_secret_exponent(self.secret, curve = SECP256k1)
+        private_key = MySigningKey.from_secret_exponent(self.secret, curve = SECP256k1)
         public_key = private_key.get_verifying_key()
         signature = private_key.sign_digest_deterministic(msg_hash, hashfunc=hashlib.sha256, sigencode = ecdsa.util.sigencode_string)
         assert public_key.verify_digest(signature, msg_hash, sigdecode = ecdsa.util.sigdecode_string)
@@ -498,7 +540,8 @@ class EC_KEY(object):
             try:
                 self.verify_message(address, sig, message)
                 return sig
-            except Exception:
+            except Exception as e:
+                print_error('Error for verifying with "%s": %s' % (chr(27 + i + (4 if compressed else 0)), str(e)))
                 continue
         else:
             raise Exception("error: cannot sign message")
@@ -523,9 +566,10 @@ class EC_KEY(object):
         public_key.verify_digest(sig[1:], h, sigdecode = ecdsa.util.sigdecode_string)
         pubkey = point_to_ser(public_key.pubkey.point, compressed)
         # check that we get the original signing address
-        addr = public_key_to_bc_address(pubkey)
+        addrtype, _ = bc_address_to_hash_160(address)
+        addr = public_key_to_bc_address(pubkey, addrtype)
         if address != addr:
-            raise Exception("Bad signature")
+            raise Exception("Bad signature for %s, sig is for %s" % (address, addr))
 
 
     # ECIES encryption/decryption methods; AES-128-CBC with PKCS7 is used as the cipher; hmac-sha256 is used as the mac
@@ -610,8 +654,6 @@ def CKD_priv(k, c, n):
     return _CKD_priv(k, c, rev_hex(int_to_hex(n,4)).decode('hex'), is_prime)
 
 def _CKD_priv(k, c, s, is_prime):
-    import hmac
-    from ecdsa.util import string_to_number, number_to_string
     order = generator_secp256k1.order()
     keypair = EC_KEY(k)
     cK = GetPubKey(keypair.pubkey,True)
@@ -633,8 +675,6 @@ def CKD_pub(cK, c, n):
 
 # helper function, callable with arbitrary string
 def _CKD_pub(cK, c, s):
-    import hmac
-    from ecdsa.util import string_to_number, number_to_string
     order = generator_secp256k1.order()
     I = hmac.new(c, cK + s, hashlib.sha512).digest()
     curve = SECP256k1
@@ -712,7 +752,6 @@ def xpub_from_xprv(xprv, testnet=False):
 
 
 def bip32_root(seed, testnet=False):
-    import hmac
     header_pub, header_priv = _get_headers(testnet)
     I = hmac.new("Bitcoin seed", seed, hashlib.sha512).digest()
     master_k = I[0:32]

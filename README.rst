@@ -1,33 +1,83 @@
-Electrum - lightweight Bitcoin client
-=====================================
+Electrum-ion - lightweight Dash client
+==========================================
 
 ::
 
-  Licence: GNU GPL v3
-  Author: Thomas Voegtlin
+  Licence: MIT Licence
+  Original Author: Thomas Voegtlin
+  Port Maintainer: Tyler Willis, Holger Schinzel
   Language: Python
-  Homepage: https://electrum.org/
+  Homepage: https://electrum-ion.org/
 
 
-.. image:: https://travis-ci.org/spesmilo/electrum.svg?branch=master
-    :target: https://travis-ci.org/spesmilo/electrum
+.. image:: https://travis-ci.org/ionomy/electrum-ion.svg?branch=master
+    :target: https://travis-ci.org/ionomy/electrum-ion
     :alt: Build Status
 
 
-1. GETTING STARTED
-------------------
 
-To run Electrum from this directory, just do::
 
-    ./electrum
 
-If you install Electrum on your system, you can run it from any
+Getting started
+===============
+
+Electrum-ion is a pure python application. However, if you want to use the
+Qt interface, then you need to install the Qt dependencies::
+
+    sudo apt-get install python-qt4
+
+If you downloaded the official package (tar.gz), then you can run
+Electrum-ion from its root directory, without installing it on your
+system; all the python dependencies are included in the 'packages'
+directory. To run Electrum-ion from its root directory, just do::
+
+    ./electrum-ion
+
+If you cloned the git repository, then you need to compile extra files
+before you can run Electrum-ion. Read the next section, "Development
+Version".
+
+
+
+Development version
+===================
+
+Check out the code from Github::
+
+    git clone git://github.com/ionomy/electrum-ion.git
+    cd electrum-ion
+
+Run install (this should install dependencies)::
+
+    python setup.py install
+
+Compile the icons file for Qt::
+
+    sudo apt-get install pyqt4-dev-tools
+    pyrcc4 icons.qrc -o gui/qt/icons_rc.py
+
+Compile the protobuf description file::
+
+    sudo apt-get install protobuf-compiler
+    protoc --proto_path=lib/ --python_out=lib/ lib/paymentrequest.proto
+
+Create translations::
+
+    sudo apt-get install python-pycurl gettext
+    ./contrib/make_locale
+
+
+
+Install on Linux systems
+========================
+
+If you install Electrum-ion on your system, you can run it from any
 directory.
 
 If you have pip, you can do::
 
     python setup.py sdist
-    sudo pip install --pre dist/Electrum-2.0.tar.gz
+    sudo pip install --pre dist/Electrum-ion-2.0.tar.gz
 
 
 If you don't have pip, install with::
@@ -37,20 +87,18 @@ If you don't have pip, install with::
 
 
 
-To start Electrum from your web browser, see
-http://electrum.org/bitcoin_URIs.html
+Creating Binaries
+=================
 
 
+In oder to creating binaries, you must create the 'packages' directory::
 
-2. HOW OFFICIAL PACKAGES ARE CREATED
-------------------------------------
+    ./contrib/make_packages
 
-On Linux/Windows::
+This directory contains the python dependencies used by Electrum-ion.
 
-    pyrcc4 icons.qrc -o gui/qt/icons_rc.py
-    python setup.py sdist --format=zip,gztar
-
-On Mac OS X::
+Mac OS X
+--------
 
     # On port based installs
     sudo python setup-release.py py2app
@@ -58,4 +106,16 @@ On Mac OS X::
     # On brew installs
     ARCHFLAGS="-arch i386 -arch x86_64" sudo python setup-release.py py2app --includes sip
 
-    sudo hdiutil create -fs HFS+ -volname "Electrum" -srcfolder dist/Electrum.app dist/electrum-VERSION-macosx.dmg
+    sudo hdiutil create -fs HFS+ -volname "Electrum-ion" -srcfolder dist/Electrum-ion.app dist/electrum-ion-VERSION-macosx.dmg
+
+
+Windows
+-------
+
+see contrib/build-wine/README
+
+
+Android
+-------
+
+see gui/kivy/Readme.txt

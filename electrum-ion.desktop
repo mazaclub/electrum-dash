@@ -1,0 +1,17 @@
+# If you want electrum-ion to appear in a linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install electrum_ion.desktop
+
+[Desktop Entry]
+Comment=Lightweight Ion-pay Client
+Exec=electrum-ion %u
+GenericName[en_US]=Electrum-ion
+GenericName=Electrum-ion
+Icon=electrum-ion
+Name[en_US]=Electrum Ion-pay Wallet
+Name=Electrum Ion-pay Wallet
+Categories=Network;
+StartupNotify=false
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/ion;
+

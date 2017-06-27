@@ -3,18 +3,25 @@
 # Electrum - lightweight Bitcoin client
 # Copyright (C) 2013 thomasv@gitorious
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import bitcoin
 from bitcoin import *
@@ -75,6 +82,10 @@ class Account(object):
     def redeem_script(self, for_change, n):
         return None
 
+    def is_used(self, wallet):
+        addresses = self.get_addresses(False)
+        return any(wallet.address_is_old(a, -1) for a in addresses)
+
     def synchronize_sequence(self, wallet, for_change):
         limit = wallet.gap_limit_for_change if for_change else wallet.gap_limit
         while True:
@@ -93,36 +104,6 @@ class Account(object):
         self.synchronize_sequence(wallet, False)
         self.synchronize_sequence(wallet, True)
 
-
-class PendingAccount(Account):
-    def __init__(self, v):
-        self.pending_address = v['address']
-        self.change_pubkeys = []
-        self.receiving_pubkeys = [ v['pubkey'] ]
-
-    def synchronize(self, wallet):
-        return
-
-    def get_addresses(self, is_change):
-        return [] if is_change else [self.pending_address]
-
-    def has_change(self):
-        return False
-
-    def dump(self):
-        return {'pending':True, 'address':self.pending_address, 'pubkey':self.receiving_pubkeys[0] }
-
-    def get_name(self, k):
-        return _('Pending account')
-
-    def get_master_pubkeys(self):
-        return []
-
-    def get_type(self):
-        return _('pending')
-
-    def get_xpubkeys(self, for_change, n):
-        return self.get_pubkeys(for_change, n)
 
 class ImportedAccount(Account):
     def __init__(self, d):
@@ -159,7 +140,7 @@ class ImportedAccount(Account):
 
     def add(self, address, pubkey, privkey, password):
         from wallet import pw_encode
-        self.keypairs[address] = (pubkey, pw_encode(privkey, password ))
+        self.keypairs[address] = [pubkey, pw_encode(privkey, password)]
 
     def remove(self, address):
         self.keypairs.pop(address)
@@ -187,7 +168,6 @@ class OldAccount(Account):
 
     @classmethod
     def mpk_from_seed(klass, seed):
-        curve = SECP256k1
         secexp = klass.stretch_key(seed)
         master_private_key = ecdsa.SigningKey.from_secret_exponent( secexp, curve = SECP256k1 )
         master_public_key = master_private_key.get_verifying_key().to_string().encode('hex')
@@ -211,11 +191,10 @@ class OldAccount(Account):
 
     @classmethod
     def get_pubkey_from_mpk(self, mpk, for_change, n):
-        curve = SECP256k1
         z = self.get_sequence(mpk, for_change, n)
-        master_public_key = ecdsa.VerifyingKey.from_string( mpk, curve = SECP256k1 )
-        pubkey_point = master_public_key.pubkey.point + z*curve.generator
-        public_key2 = ecdsa.VerifyingKey.from_public_point( pubkey_point, curve = SECP256k1 )
+        master_public_key = ecdsa.VerifyingKey.from_string(mpk, curve = SECP256k1)
+        pubkey_point = master_public_key.pubkey.point + z*SECP256k1.generator
+        public_key2 = ecdsa.VerifyingKey.from_public_point(pubkey_point, curve = SECP256k1)
         return '04' + public_key2.to_string().encode('hex')
 
     def derive_pubkeys(self, for_change, n):
@@ -239,7 +218,6 @@ class OldAccount(Account):
 
 
     def check_seed(self, seed):
-        curve = SECP256k1
         secexp = self.stretch_key(seed)
         master_private_key = ecdsa.SigningKey.from_secret_exponent( secexp, curve = SECP256k1 )
         master_public_key = master_private_key.get_verifying_key().to_string()
@@ -391,7 +369,7 @@ class Multisig_Account(BIP32_Account):
 
     def pubkeys_to_address(self, pubkeys):
         redeem_script = Transaction.multisig_script(sorted(pubkeys), self.m)
-        address = hash_160_to_bc_address(hash_160(redeem_script.decode('hex')), 5)
+        address = hash_160_to_bc_address(hash_160(redeem_script.decode('hex')), bitcoin.SCRIPT_ADDR)
         return address
 
     def get_address(self, for_change, n):
@@ -402,5 +380,3 @@ class Multisig_Account(BIP32_Account):
 
     def get_type(self):
         return _('Multisig %d of %d'%(self.m, len(self.xpub_list)))
-
-

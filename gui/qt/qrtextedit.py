@@ -1,9 +1,9 @@
-from electrum_dash.i18n import _
-from electrum_dash.plugins import run_hook
+from electrum_ion.i18n import _
+from electrum_ion.plugins import run_hook
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-from util import ButtonsTextEdit
+from util import ButtonsTextEdit, MessageBoxMixin
 
 
 class ShowQRTextEdit(ButtonsTextEdit):
@@ -12,6 +12,7 @@ class ShowQRTextEdit(ButtonsTextEdit):
         ButtonsTextEdit.__init__(self, text)
         self.setReadOnly(1)
         self.addButton(":icons/qrcode.png", self.qr_show, _("Show as QR code"))
+
         run_hook('show_text_edit', self)
 
     def qr_show(self):
@@ -28,7 +29,7 @@ class ShowQRTextEdit(ButtonsTextEdit):
         m.exec_(e.globalPos())
 
 
-class ScanQRTextEdit(ButtonsTextEdit):
+class ScanQRTextEdit(ButtonsTextEdit, MessageBoxMixin):
 
     def __init__(self, text=""):
         ButtonsTextEdit.__init__(self, text)
@@ -46,11 +47,11 @@ class ScanQRTextEdit(ButtonsTextEdit):
         self.setText(data)
 
     def qr_input(self):
-        from electrum_dash import qrscanner, get_config
+        from electrum_ion import qrscanner, get_config
         try:
             data = qrscanner.scan_qr(get_config())
-        except BaseException, e:
-            QMessageBox.warning(self, _('Error'), _(e), _('OK'))
+        except BaseException as e:
+            self.show_error(str(e))
             return ""
         if type(data) != str:
             return

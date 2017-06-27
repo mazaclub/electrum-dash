@@ -31,7 +31,7 @@ if (id) {
         .done( function(data) {
 	    new QRCode(document.getElementById("qrcode"), data.URI);
             $("<p />").text(data.memo).appendTo($("p#reason"));
-            $("<p />").text(data.amount/100000000 + "DASH").appendTo($("p#amount"));
+            $("<p />").text(data.amount/100000000 + "ION").appendTo($("p#amount"));
 	    $("a").attr("href", data.URI);
             $("<p />").text("Powered by Electrum").appendTo($("p#powered"));
 	    $(function () {
@@ -39,12 +39,13 @@ if (id) {
 		var max = 100;
 		var initial = data.time;
 		var duration = data.exp;
-  		var current = 100 * (Math.floor(Date.now()/1000) - initial)/duration;
-		$("#progressbar").progressbar({
+                if(duration){
+     		  var current = 100 * (Math.floor(Date.now()/1000) - initial)/duration;
+		  $("#progressbar").progressbar({
 		    value: current,
 		    max: max
-		});
-		function update() {
+		  });
+		  function update() {
         	    current = 100 * (Math.floor(Date.now()/1000) - initial)/duration;
 		    $("#progressbar").progressbar({
 			value: current
@@ -52,8 +53,9 @@ if (id) {
 		    if (current >= max) {
 			$("#container").html("This invoice has expired");
 		    }
-		};
-		var interval = setInterval(update, 1000);
+		  };
+		  var interval = setInterval(update, 1000);
+                 }
             });
 	    })
 	.fail(function() {
@@ -76,7 +78,7 @@ ws.onmessage = function (evt) {
 
 
 // See http://stackoverflow.com/questions/29186154/chrome-clicking-mailto-links-closes-websocket-connection
-$(document).on('click', 'a[href^="dash:"]', function (e) {
+$(document).on('click', 'a[href^="ion:"]', function (e) {
     e.preventDefault();
     var btcWindow = window.open($(e.currentTarget).attr('href'));
     btcWindow.close();
@@ -91,7 +93,7 @@ $(document).on('click', 'a[href^="dash:"]', function (e) {
             <p id="reason"></p>
             <p id="amount"></p>
 	    <div style="background-color:#7777aa; border-radius: 5px; padding:10px;">
-		<a style="color:#ffffff; text-decoration:none;" id="paylink" target="_blank">Pay with Dash</a>
+		<a style="color:#ffffff; text-decoration:none;" id="paylink" target="_blank">Pay with Ion</a>
 	    </div>
 	    <br/>
 	    <div id="qrcode" align="center"></div>

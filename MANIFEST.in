@@ -1,8 +1,9 @@
-include README LICENCE RELEASE-NOTES AUTHORS
-include electrum-dash.conf.sample
-include electrum_dash.desktop
+include LICENCE RELEASE-NOTES AUTHORS
+include README.rst
+include electrum-ion.conf.sample
+include electrum-ion.desktop
 include *.py
-include electrum-dash
+include electrum-ion
 recursive-include lib *.py
 recursive-include gui *.py
 recursive-include plugins *.py
@@ -12,4 +13,4 @@ include app.fil
 include icons.qrc
 recursive-include icons *
 recursive-include scripts *
-recursive-include docs *
+

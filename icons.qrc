@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="/" >
-    <file>icons/electrum_dash.png</file>
+    <file>icons/electrum-ion.png</file>
+    <file>icons/electrum-ion-logo.png</file>
+    <file>icons/electrum.ico</file>
     <file>icons/clock1.png</file>
     <file>icons/clock2.png</file>
     <file>icons/clock3.png</file>
@@ -9,12 +11,13 @@
     <file>icons/confirmed.png</file>
     <file>icons/cold_seed.png</file>
     <file>icons/copy.png</file>
-    <file>icons/dark_background.png</file>
     <file>icons/expired.png</file>
     <file>icons/electrum_light_icon.png</file>
     <file>icons/electrum_dark_icon.png</file>
     <file>icons/file.png</file>
     <file>icons/hot_seed.png</file>
+    <file>icons/ion_logo_text.png</file>
+    <file>icons/keepkey.png</file>
     <file>icons/key.png</file>
     <file>icons/lock.png</file>
     <file>icons/microphone.png</file>
@@ -26,7 +29,6 @@
     <file>icons/status_disconnected.png</file>
     <file>icons/status_waiting.png</file>
     <file>icons/status_lagging.png</file>
-    <file>icons/switchgui.png</file>
     <file>icons/seal.png</file>
     <file>icons/speaker.png</file>
     <file>icons/trezor.png</file>
@@ -35,5 +37,10 @@
     <file>icons/unpaid.png</file>
     <file>icons/unlock.png</file>
     <file>icons/zoom.png</file>
+    <file>icons/ion_downArrow.png</file>
+    <file>icons/ion_upArrow_small.png</file>
+    <file>icons/ion_downArrow_small.png</file>
+    <file>icons/ion_leftArrow_small.png</file>
+    <file>icons/ion_rightArrow_small.png</file>
   </qresource>
 </RCC>
